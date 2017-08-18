@@ -6,7 +6,9 @@
  * Look at the document for an example
  * */
 
- #include <stddef.h>
+#include <stddef.h>
+#include<string>
+using namespace std;
 
 struct node {
     char c;
@@ -16,7 +18,7 @@ struct node {
     }
  };
 
-bool validate(char *code);
-node **parse(char *code);
+bool validate(char *);
+node *parse(string,int);
 
 #endif
