@@ -3,7 +3,8 @@
 #include<stdlib.h>
 #include<stack>
 #include<map>
-
+#include<string>
+using namespace std;
 
 node *q , *t , *tx , *pt;
 
@@ -22,8 +23,24 @@ std::map<char , int>mp;
 
 // map to all the commands in brain****, stores 1 if valid command else 0
 
+void find_and_replace(string& source, string const& find, string const& replace)
+{
+    for(string::size_type i = 0; (i = source.find(find, i)) != string::npos;)
+    {
+        source.replace(i, find.length(), replace);
+        i += replace.length();
+    }
+}
 
-char str[8] = {'.' , ',' , '+' , '-' , '<' , '>' , '[' , ']'};
+//Replaces the new tokens to single character for ease of access and storage
+
+/*
+    'sq'   = 'A'
+    'sr'   = 'B'
+    'fact' = 'C'
+*/
+
+char str[11] = {'.' , ',' , '+' , '-' , '<' , '>' , '[' , ']','A','B','C'};
 
 
 // all the valid commands in brain****
@@ -42,7 +59,7 @@ char str[8] = {'.' , ',' , '+' , '-' , '<' , '>' , '[' , ']'};
 
 
 bool validate(char *code, int sz) {
-    for ( int i = 0; i < 8; i++ ) {
+    for ( int i = 0; i < 11; i++ ) {
         mp[str[i]] = 1;
     }
     int ct = 0, x = 0;
@@ -72,20 +89,34 @@ bool validate(char *code, int sz) {
     else we point the element to r
 
 
-    so for example ++[->+[-+-]<]-->
+    so for example ++sq[->+[-+-]<]-->
 
-                                                    ['-'] -> ['+'] -> ['-'] -> [']']
-                                                     ^
-                                                     |
-                        ['-'] -> ['>'] -> ['+'] -> ['['] -> ['<'] -> [']']
-                        ^
-                        |
-    ['+'] -> ['+'] -> ['['] -> ['-'] -> ['-'] -> ['>']
+                                                          ['-'] -> ['+'] -> ['-'] -> [']']
+                                                            ^
+                                                            |
+                               ['-'] -> ['>'] -> ['+'] -> ['['] -> ['<'] -> [']']
+                                 ^
+                                 |
+    ['+'] -> ['+'] -> ['A'] -> ['['] -> ['-'] -> ['-'] -> ['>']
 */
 
 
-node **parse(char *code, int sz) {
-    char *c2 = code;
+node *parse(string str, int sz) {
+
+    find_and_replace(str,"sq","A");
+    find_and_replace(str,"sr","B");
+    find_and_replace(str,"fact","C");
+
+    //Storing string into character array
+
+    int len = str.length();
+    char* code;
+    code = new char[len];
+    str.copy(code,len,0);
+    code[len]='\0';
+
+    char* c2 = code;
+
     if ( !validate(c2 , sz) ) {
         return NULL;
     }
@@ -117,6 +148,6 @@ node **parse(char *code, int sz) {
         }
         code++; x++;
     }
-    return &pt;
+    return pt;
 }
 
